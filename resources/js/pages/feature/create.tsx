@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Role, type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { z } from 'zod';
 import { createFeatureSchema } from './validation';
@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
@@ -25,45 +24,50 @@ import 'react-quill-new/dist/quill.snow.css';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'User',
-        href: '/user/list',
+        title: 'Feature',
+        href: '/feature/list',
     },
     {
-        title: 'Create User',
-        href: '/user/create',
+        title: 'Create Feature',
+        href: '/feature/create',
     },
 ];
 
-export default function CreateUserPage({
+export default function CreateFeaturePage({
         title
     }: {
         title: string;
     }) {
-    const [roles, setRoles] = useState<Role[]>([]);
-    const fetchRoles = async () => {
-        const response = await axios.get(route('role.get'));
-        if (response.status == 200) {
-            setRoles(response.data);
-        }
-    }
-    type UserFormValue = z.infer<typeof createFeatureSchema>;
-    const defaultValueUserForm: Partial<UserFormValue> = {
+    // const [roles, setRoles] = useState<Role[]>([]);
+    // const fetchRoles = async () => {
+    //     const response = await axios.get(route('role.get'));
+    //     if (response.status == 200) {
+    //         setRoles(response.data);
+    //     }
+    // }
+    type FeatureFormValue = z.infer<typeof createFeatureSchema>;
+    const defaultValueUserForm: Partial<FeatureFormValue> = {
         name: undefined,
         description: undefined,
         price: undefined,
         picture: undefined
     };
-    const featureForm = useForm<UserFormValue>({
+    const featureForm = useForm<FeatureFormValue>({
         resolver: zodResolver(createFeatureSchema),
         defaultValues: defaultValueUserForm
     });
-    useEffect(() => {
-        fetchRoles()
-    }, []);
+    // useEffect(() => {
+    //     fetchRoles()
+    // }, []);
 
-    const onSubmit = async (data: UserFormValue) => {
+    const onSubmit = async (data: FeatureFormValue) => {
+        // console.log(data);
         try {
-            const response = await axios.post(route('user.store'), data);
+            const response = await axios.post(route('feature.store'), data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                  }
+            });
             if (response.status == 200) {
                 toast(response.data.message);
             }
@@ -71,7 +75,7 @@ export default function CreateUserPage({
                 throw(`Error`);
             }
             setTimeout(() => {
-                window.location.href = '/user/list';
+                window.location.href = '/feature/list';
             }, 3000);
         } catch (error) {
             toast(error as string)
@@ -93,7 +97,7 @@ export default function CreateUserPage({
                                         <FormItem>
                                             <FormLabel>Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="input user fullname" {...field} />
+                                                <Input placeholder="input feature names" {...field} />
                                             </FormControl>
                                             <FormDescription>
                                                 This is feature public display name.
@@ -139,21 +143,21 @@ export default function CreateUserPage({
                                     name="picture"
                                     render={({ field: { value, onChange, ...fieldProps } }) => (
                                         <FormItem>
-                                        <FormLabel>Picture</FormLabel>
-                                        <Input type='file' {...fieldProps} onChange={(e) => {
-                                            const file = e.target.files?.[0];
-                                            onChange(file)
-                                        }} />
-                                        <FormDescription>
-                                            Only image with format jpg, png, and jpeg are supported.
-                                        </FormDescription>
-                                        <FormMessage />
+                                            <FormLabel>Picture</FormLabel>
+                                            <Input type='file' {...fieldProps} onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                onChange(file)
+                                            }} />
+                                            <FormDescription>
+                                                Only image with format jpg, png, and jpeg are supported.
+                                            </FormDescription>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                     />
                                 <div className="flex gap-2">
-                                    <Button type="submit">Submit</Button>
-                                    <Link href="/user/list">
+                                    <Button type="submit" disabled={featureForm.formState.isSubmitting}>Submit</Button>
+                                    <Link href="/feature/list">
                                         <Button type="button" className="bg-red-500 hover:bg-red-600">Cancel</Button>
                                     </Link>
                                 </div>

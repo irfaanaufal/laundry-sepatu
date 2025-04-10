@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Feature;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Requests\Feature\StoreRequest as FeatureStore;
+use App\Http\Requests\Feature\UpdateRequest as FeatureUpdate;
+use Illuminate\Support\Facades\DB;
 
 class FeatureController extends Controller
 {
@@ -34,9 +37,18 @@ class FeatureController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(FeatureStore $request)
     {
-        //
+        DB::transaction(function() use($request) {
+            $validated = $request->validated();
+            $validated['picture'] = $request->file('picture')->store('features');
+            $validated['price'] = intval($validated['price']);
+            Feature::create($validated);
+        });
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Successfully to create new feature data!'
+        ]);
     }
 
     /**

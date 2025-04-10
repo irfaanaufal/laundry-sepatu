@@ -33,6 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('feature/list', 'index')->name('feature.index');
         Route::get('feature/create', 'create')->name('feature.create');
+
+        Route::post('feature/store', 'store')->name('feature.store');
     });
 
     Route::controller(OrderController::class)->group(function() {

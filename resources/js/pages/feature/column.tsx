@@ -47,7 +47,7 @@ export const columnFeatures: ColumnDef<Feature>[] = [
             const feature = row.original;
             return (
                 <>
-                    <img src={feature.picture} alt={`Picture of ${feature.name}`} className="h-6rem" />
+                    <img src={`/storage/${feature.picture}`} alt={`Picture of ${feature.name}`} className="h-[6rem]" />
                 </>
             )
         }
@@ -59,7 +59,7 @@ export const columnFeatures: ColumnDef<Feature>[] = [
             const feature = row.original;
             return (
                 <>
-                    <h3 className="font-semibold text-md">Rp. {Intl.NumberFormat('id_ID').format(parseInt(feature.price))}</h3>
+                    <h3 className="font-semibold text-md">Rp. {Intl.NumberFormat('id-ID').format(parseInt(feature.price))}</h3>
                 </>
             )
         }
