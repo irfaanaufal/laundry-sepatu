@@ -70,5 +70,15 @@ export interface Feature {
     description: string;
     picture: string;
     price: string;
+    variants: Variant[];
     [key: string]: unknown;
+}
+
+export interface Variant {
+    feature: Feature;
+    id: number;
+    name: string;
+    description: string;
+    picture: string;
+    price: string;
 }

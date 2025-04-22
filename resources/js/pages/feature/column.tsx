@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Feature } from "@/types";
-import { ArrowUpDown, Edit2, Eye } from "lucide-react";
+import { Feature, Variant } from "@/types";
+import { ArrowUpDown, Edit2, Eye, Pencil, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Drawer,
@@ -15,6 +15,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@inertiajs/react";
 import { Input } from "@/components/ui/input";
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.bubble.css';
+import { useEffect, useState } from "react";
+
 export const columnFeatures: ColumnDef<Feature>[] = [
     {
         id: 'id',
@@ -65,6 +69,40 @@ export const columnFeatures: ColumnDef<Feature>[] = [
         }
     },
     {
+        accessorKey: 'variants',
+        header: 'Variants',
+        cell: ({ row }) => {
+            const feature = row.original;
+            return (
+                <>
+                    {feature.variants.length > 0 ?
+                    feature.variants.map((variant, idx) => (
+                        <div key={idx} className="flex flex-col gap-2">
+                            <div className="flex flex-row gap-2">
+                                <Badge variant="outline">{variant.name}</Badge>
+                                <Link href={`/feature/${feature.id}/variant/${variant.id}/edit`}>
+                                    <Badge variant="outline" className="cursor-default hover:bg-primary hover:text-white"><Pencil/></Badge>
+                                </Link>
+                            </div>
+                            <Link href={`/feature/${feature.id}/variant/create`}>
+                                <Badge variant="outline" className="cursor-default hover:bg-primary hover:text-white"><Plus/></Badge>
+                            </Link>
+                        </div>
+                    ))
+                    :
+                    (
+                    <div className="flex flex-col gap-2">
+                        <Badge variant="outline">There's No Variants</Badge>
+                        <Link href={`/feature/${feature.id}/variant/create`}>
+                            <Badge variant="outline" className="cursor-default hover:bg-primary hover:text-white"><Plus/></Badge>
+                        </Link>
+                    </div>
+                    )}
+                </>
+            );
+        }
+    },
+    {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
@@ -82,21 +120,29 @@ export const columnFeatures: ColumnDef<Feature>[] = [
                             <Eye />
                         </Badge>
                     </DrawerTrigger>
-                    <DrawerContent>
+                    <DrawerContent className="overflow-y-scroll overflow-x-hidden">
                         <DrawerHeader>
                             <DrawerTitle>Feature Detail</DrawerTitle>
                             <DrawerDescription>this is about feature detail.</DrawerDescription>
                             <>
+                            <img src={`/storage/${feature.picture}`} alt={`Image of ${feature.name}`} className="min-w-full min-h-[6rem]" />
+                            </>
+                            <>
                                 <h1 className="font-bold text-md">Name</h1>
-                                <Input value={feature.name} readOnly/>
+                                <Input value={feature.name} readOnly className="border-none shadow-none font-bold"/>
                             </>
                             <>
                                 <h1 className="font-bold text-md">Description</h1>
-                                <Input value={feature.description} readOnly/>
+                                <div className="h-auto">
+                                    <ReactQuill theme="bubble" value={feature.description}/>
+                                </div>
                             </>
                             <>
                                 <h1 className="font-bold text-md">Price</h1>
-                                <Input value={feature.price} readOnly/>
+                                <Input value={`Rp. ${Intl.NumberFormat('id-ID').format(parseInt(feature.price))}`} readOnly className="border-none shadow-none font-bold"/>
+                            </>
+                            <>
+                                <h1 className="font-bold text-md">Variants</h1>
                             </>
                         </DrawerHeader>
                         <DrawerFooter>

@@ -5,6 +5,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VariantController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -33,8 +34,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('feature/list', 'index')->name('feature.index');
         Route::get('feature/create', 'create')->name('feature.create');
+        Route::get('feature/edit/{feature}', 'edit')->name('feature.edit');
+
+        Route::get('feature/{feature}/variant/create', 'variant_create')->name('feature.variant.create');
+        Route::get('feature/{feature}/variant/{variant}/edit', 'variant_edit')->name('feature.variant.edit');
+
 
         Route::post('feature/store', 'store')->name('feature.store');
+        Route::patch('feature/update/{feature}', 'update')->name('feature.update');
+
+        Route::post('feature/{feature}/variant/store', 'variant_store')->name('feature.variant.store');
+        Route::patch('feature/{feature}/variant/{variant}/update', 'variant_update')->name('feature.variant.update');
+    });
+
+    Route::controller(VariantController::class)->group(function() {
+        Route::get('feature/{feature}/variant', 'get')->name('feature.variants');
+        Route::get('feature/{feature}/variant/{variant}', 'getId')->name('feature.variant');
     });
 
     Route::controller(OrderController::class)->group(function() {

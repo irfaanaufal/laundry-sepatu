@@ -15,7 +15,9 @@ class Variant extends Model
     protected $fillable = [
         'feature_id',
         'name',
+        'slug',
         'description',
+        'picture',
         'price',
     ];
 

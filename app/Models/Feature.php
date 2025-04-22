@@ -13,6 +13,7 @@ class Feature extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'description',
         'price',
         'picture',
